@@ -1,0 +1,45 @@
+from gtts import gTTS
+from textblob import TextBlob
+import os
+
+# Function to perform sentiment analysis and convert text to speech
+def text_to_speech_with_emotion(text):
+    # Perform sentiment analysis
+    blob = TextBlob(text)
+    sentiment = blob.sentiment.polarity
+
+    # Determine the sentiment type
+    if sentiment > 0:
+        sentiment_type = "positive"
+    elif sentiment < 0:
+        sentiment_type = "negative"
+    else:
+        sentiment_type = "neutral"
+
+    # Print sentiment result
+    print(f"Sentiment Analysis: The sentiment is {sentiment_type} with polarity {sentiment:.2f}")
+
+    # Set language for TTS (English)
+    tts_lang = 'en'
+
+    # Convert text to speech
+    speech = f"The sentiment of this text is {sentiment_type}. Now reading the text: {text}"
+    tts = gTTS(text=speech, lang=tts_lang, slow=False)
+
+    # Save the audio file and play it
+    tts.save("speech.mp3")
+
+    # Playing the saved audio file
+    if os.name == 'nt':  # For Windows
+        os.system("start speech.mp3")
+    elif os.name == 'posix':  # For macOS or Linux
+        os.system("open speech.mp3")  # For macOS
+        # If you're on Linux, use this instead: os.system("xdg-open speech.mp3")
+
+# Example usage
+if __name__ == "__main__":
+    text = input("Enter text for sentiment analysis and speech synthesis: ")
+    if text.strip():
+        text_to_speech_with_emotion(text)
+    else:
+        print("No text entered. Please provide valid input.")
